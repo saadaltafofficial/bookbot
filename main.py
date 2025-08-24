@@ -1,47 +1,29 @@
+from stats import get_number_of_words, get_book_text, get_character_count,get_sorted_list 
+import sys
 
-path_to_file = "books/frankenstein.txt"
+if len(sys.argv) < 2:
+    print("Usage: python3 main.py <path_to_book>")
+    sys.exit(1)
 
-def main(path_to_file):
-    with open(path_to_file) as f:
-        book_content = f.read()
-        return book_content
+file_path = sys.argv[1]
 
-def count_words(path_to_file):
-    book = main(path_to_file)   
-    split_book = book.split()
-    count = len(split_book)
-    
-    return count
+def sort_on(items):
+    return items["num"]
 
-def character_count(path_to_file):
-    book = main(path_to_file)
-    lowered_case_book = book.lower()
-    character_obj = {}
+def main():
+	print("============ BOOKBOT ============")
+	print("Analyzing book found at " + file_path + "...")
+	print("----------- Word Count ----------")
+	num_of_words = get_number_of_words(file_path)
+	print(f"Found {num_of_words} total words")
+	content = get_book_text(file_path) 
+	dic_of_char = get_character_count(content)	
+	print("----------- Character Count ----------")
+	sorted_chars = get_sorted_list(dic_of_char)
+	sorted_chars.sort(key=sort_on, reverse=True)
+	for item in sorted_chars:
+		print(f"{item['char']}: {item['num']}")
+	print("============= END ===============")
 
-    for char in lowered_case_book:
-        if char in character_obj:
-            character_obj[char] +=  1
-        else:
-            character_obj[char] = 1
-
-    return character_obj
-
-
-characters = character_count(path_to_file)
-words = count_words(path_to_file)
-del characters["#"]
-del characters[" "]
-del characters["."]
-
-updated_characters = characters
-
-def generate_report(path, updated_characters, total_words):
-    print(f"--- Begin report of {path} ---")
-    print(f"{total_words} words found in the document\n")
-
-    for char in updated_characters:
-        print(f"The '{char}' character was found {updated_characters[char]} times")
-
-    print(f"--- End report ---")
-
-generate_report(path_to_file, characters, words)
+if __name__ == "__main__":
+	main()
